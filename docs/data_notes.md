@@ -58,15 +58,62 @@ One row = one price change at one station for one fuel type. It is **not** a dai
 | 2 | **Different header rows:** older files have a title in row 1 and headers in row 3; newer files start at row 1 | Detect the header row by finding the first column name |
 | 3 | **Inconsistent file names** (e.g. `mar25`, `july2025`, `october2026`; Oct 2026 is XLSX despite the `price_history_checks` name) | Take the month from `PriceUpdatedDate`, not the file name |
 
-## Data quality checks (to complete)
+## Data quality checks
 
-- [ ] Rows per file
-- [ ] Number of stations per file
-- [ ] Min/max `PriceUpdatedDate` per file (each file covers only its month?)
-- [ ] Blank values per column
-- [ ] Duplicate rows
-- [ ] Extreme prices (e.g. below 100 c/L or above 300 c/L)
-- [ ] Same columns across all 34 files
+Profiled 19 Nov 2026 with `scripts/profile_history.py`. Full results: `docs/history_profile.csv`.
+
+| Check | Result |
+|---|---|
+| Files | 34 (Jan 2024 – Oct 2026), 2,897,626 rows |
+| Rows per file | 55k – 155k. Roughly double from Mar 2026 onwards (investigate in analysis) |
+| Same columns in all files | Yes |
+| Each file covers one month | Yes, after fixing date parsing |
+| Bad dates | 0 |
+| Blank cells | 0 |
+| Duplicate rows | 33 across 5 files. Remove in cleaning |
+| Prices over 300 c/L | 0 |
+| Prices under 100 c/L | 1,696. Mostly LPG (1,477), which is realistic. 219 in other fuels are likely errors |
+
+**Date formats:** Excel files hold real dates. CSVs use either `2024-07-01 00:04:36` (ISO) or `1/06/2025 0:08` (day-first). `parse_dates` detects which.
+
+**Low price rule:** for E10, U91, P95, P98, DL and PDL, prices under 100 c/L are flagged as outliers. They stay in `raw`, are flagged in `staging` and are excluded from `reporting`. LPG is not flagged.
+
+## FuelCheck API (current prices)
+
+First test on 17 Nov 2026: **3,287 stations, 10,557 prices** in one call to `/FuelPriceCheck/v1/fuel/prices`.
+
+The response has two lists, joined on `prices.stationcode` = `stations.code`.
+
+**`stations`**
+
+| Field | Example | Notes |
+|---|---|---|
+| `code` | `972` | Join key. Text, not number |
+| `name` | United Petroleum Umina | |
+| `brand` | United | |
+| `address` | 307-313 Ocean Beach Road, UMINA BEACH NSW 2257 | Suburb and postcode are inside the address, not separate fields |
+| `location` | latitude, longitude | Not in the history files. Useful for maps |
+| `stationid`, `brandid` | | Internal IDs, not needed |
+| `isAdBlueAvailable` | False | Useful for diesel fleets |
+
+**`prices`**
+
+| Field | Example | Notes |
+|---|---|---|
+| `stationcode` | `1` | Join key |
+| `fueltype` | `DL` | Same codes as history `FuelCode` |
+| `price` | 269.9 | Cents per litre |
+| `lastupdated` | 15/11/2026 19:00:27 | Day-first date format |
+
+**API vs history files**
+
+| | History files | API |
+|---|---|---|
+| One row = | A price change | Current price per station per fuel |
+| Suburb / postcode | Separate columns | Inside `address` |
+| Coordinates | No | Yes |
+
+Each daily API snapshot repeats prices that haven't changed. Keeping only rows where `lastupdated` is new turns snapshots into price changes, matching the history files.
 
 ## Implications for the pipeline
 
