@@ -105,6 +105,28 @@ The response has two lists, joined on `prices.stationcode` = `stations.code`.
 | `price` | 269.9 | Cents per litre |
 | `lastupdated` | 15/11/2026 19:00:27 | Day-first date format |
 
+**API profile (24 Nov 2026, `scripts/profile_api.py`)**
+
+| Check | Result |
+|---|---|
+| Records | 3,284 stations, 10,532 prices |
+| Missing or blank fields | None |
+| Prices with no matching station / stations with no prices | 0 / 0 |
+| Duplicate station + fuel pairs | 0 |
+| Fuel codes | Same 10 as history: B20, DL, E10, E85, EV, LPG, P95, P98, PDL, U91 |
+| `code` / `stationid` | Unique per station. Use `code` as the station identifier |
+| `name` | Not unique (3,170 names for 3,284 stations). Never join on name |
+| `address` | 3,224 unique. Some stations share an address |
+| `brand` / `brandid` | 76 each |
+| `lastupdated` range | 25 Jun 2018 to 24 Nov 2026. Some "current" prices are years old |
+| Time zone of `lastupdated` | To confirm (NSW local or UTC) |
+| Reference data `/lovs` | Returned a 500 server error. Not needed for the core build |
+
+**Things to handle in staging**
+- **EV** is charging (prices 0–45), not fuel per litre. Exclude from fuel analysis.
+- **Stale prices:** add a `price_age_days` column; decide a cutoff during analysis.
+- **Prices over 300 c/L** appear in the API (max U91 369, DL 381, P98 389, E85 475), but none in the history files. Investigate before analysis.
+
 **API vs history files**
 
 | | History files | API |
