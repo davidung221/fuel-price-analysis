@@ -1,0 +1,46 @@
+# Runs the daily FuelCheck extract on GitHub's servers and loads it into BigQuery.
+name: Daily fuel price extract
+
+on:
+  schedule:
+    # Cron runs on UTC. 10:17 UTC = 9:17 pm Sydney in summer (AEDT), 8:17 pm in winter (AEST).
+    # Odd minute (:17) because the top of the hour is GitHub's busiest time.
+    - cron: "17 10 * * *"
+  workflow_dispatch: # adds a "Run workflow" button for manual runs
+
+permissions:
+  contents: read # the job only needs to read the repo's code
+
+concurrency:
+  group: daily-extract # never run two extracts at the same time
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # stop if something hangs
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip # reuse downloaded packages between runs
+
+      - name: Install packages
+        run: pip install -r requirements.txt
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Run daily extract
+        env:
+          FUEL_API_KEY: ${{ secrets.FUEL_API_KEY }}
+          FUEL_API_SECRET: ${{ secrets.FUEL_API_SECRET }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: python scripts/extract_prices.py
