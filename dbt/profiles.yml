@@ -1,0 +1,16 @@
+# How dbt connects to BigQuery.
+# No secrets here: values come from environment variables
+# (.env locally, GitHub Secrets in GitHub Actions).
+fuel_pipeline:
+  target: prod
+  outputs:
+    prod:
+      type: bigquery
+      method: service-account
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"  # path to the key file
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: staging              # default dataset if a model doesn't set one
+      location: australia-southeast1
+      threads: 4                    # how many models build at the same time
+      job_execution_timeout_seconds: 300
+      job_retries: 1
