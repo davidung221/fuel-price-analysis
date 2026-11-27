@@ -1,0 +1,29 @@
+# dbt project settings for the NSW fuel price pipeline
+name: fuel_pipeline
+version: "1.0.0"
+config-version: 2
+
+# Which connection (from profiles.yml) to use. Set up in item 2.
+profile: fuel_pipeline
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  fuel_pipeline:
+    staging:
+      +schema: staging        # BigQuery dataset
+      +materialized: view     # cleaned data, always up to date, no storage cost
+    reporting:
+      +schema: reporting
+      +materialized: table    # business-ready, fast for Power BI
+
+seeds:
+  fuel_pipeline:
+    +schema: staging          # reference lists (e.g. Greater Sydney postcodes)

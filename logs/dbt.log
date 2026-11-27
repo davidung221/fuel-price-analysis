@@ -1,0 +1,29 @@
+[0m14:34:14.753242 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fc39eb61970>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fc3a008d8e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fc3a01bfa10>]}
+
+
+============================== 14:34:14.756739 | 752d1d9a-054e-4697-b6e9-7eae7277bdd2 ==============================
+[0m14:34:14.756739 [info ] [MainThread]: Running with dbt=1.12.7
+[0m14:34:14.757249 [debug] [MainThread]: running dbt with arguments {'invocation_command': 'dbt init fuel_pipeline --skip-profile-setup', 'warn_error': 'None', 'log_cache_events': 'False', 'empty': 'None', 'cache_selected_only': 'False', 'version_check': 'True', 'printer_width': '80', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'no_print': 'None', 'log_format': 'default', 'target_path': 'None', 'debug': 'False', 'log_path': 'logs', 'introspect': 'True', 'hints_enabled': 'True', 'static_parser': 'True', 'use_experimental_parser': 'False', 'fail_fast': 'False', 'maximum_seed_size_mib': '1', 'send_anonymous_usage_stats': 'True', 'partial_parse': 'True', 'indirect_selection': 'eager', 'write_json': 'True', 'use_colors': 'True', 'profiles_dir': '/home/davung/.dbt', 'quiet': 'False'}
+[0m14:34:14.773708 [info ] [MainThread]: Creating dbt configuration folder at /home/davung/.dbt
+[0m14:34:14.776154 [debug] [MainThread]: Starter project path: /home/davung/gitprojects/fuel-price-analysis/.venv/lib/python3.12/site-packages/dbt/include/starter_project
+[0m14:34:14.786890 [info ] [MainThread]: Your new dbt project "fuel_pipeline" was created!
+Initialized new project in /home/davung/gitprojects/fuel-price-analysis/fuel_pipeline/fuel_pipeline
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m14:34:14.788416 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.121824354, "process_in_blocks": "76160", "process_kernel_time": 0.40538, "process_mem_max_rss": "107200", "process_out_blocks": "64", "process_user_time": 1.337377}
+[0m14:34:14.788856 [debug] [MainThread]: Command `dbt init` succeeded at 14:34:14.788754 after 0.12 seconds
+[0m14:34:14.789156 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fc39e9e5ac0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fc39e9e6000>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fc39dcded80>]}
+[0m14:34:14.789476 [debug] [MainThread]: Flushing usage events
+[0m14:34:15.754371 [debug] [MainThread]: An error was encountered while trying to flush usage events
