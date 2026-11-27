@@ -1,0 +1,23 @@
+version: 2
+
+seeds:
+  - name: greater_sydney_postcodes
+    description: >
+      Postcodes in the ABS Greater Sydney boundary (GCCSA 1GSYD, ASGS Edition 3, 2021).
+      A postcode is included if 50% or more of its mesh blocks are inside Greater Sydney.
+      Built by scripts/build_sydney_postcodes.py from ABS allocation files (CC BY 4.0).
+    config:
+      column_types:
+        postcode: string            # keep as text, not a number
+        sa4_name: string
+        greater_sydney_share: float64
+    columns:
+      - name: postcode
+        description: 4-digit postcode
+        data_tests:
+          - unique
+          - not_null
+      - name: sa4_name
+        description: ABS SA4 region most of the postcode falls in (e.g. Sydney - Parramatta)
+      - name: greater_sydney_share
+        description: Share of the postcode's mesh blocks inside Greater Sydney (0.5 to 1)
