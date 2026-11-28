@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_history_prices
+    description: >
+      Price changes from the monthly history files, cleaned. One row per price change
+      per station per fuel type. All of NSW. Exact duplicates removed; outliers flagged, not removed.
+    columns:
+      - name: station_key
+        description: Built from station name + address (history files have no station code)
+        data_tests:
+          - not_null
+      - name: fuel_code
+        data_tests:
+          - not_null
+      - name: price_updated_at
+        description: When the price changed, Sydney local time
+        data_tests:
+          - not_null
+      - name: price_cpl
+        description: Price in cents per litre
+        data_tests:
+          - not_null
+      - name: is_outlier
+        description: True for petrol/diesel prices under 100 c/L (likely data entry errors)
+      - name: is_fuel
+        description: False for EV charging prices
