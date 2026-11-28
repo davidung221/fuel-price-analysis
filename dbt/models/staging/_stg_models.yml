@@ -25,3 +25,34 @@ models:
         description: True for petrol/diesel prices under 100 c/L (likely data entry errors)
       - name: is_fuel
         description: False for EV charging prices
+
+  - name: stg_api_prices
+    description: >
+      Price changes from the daily API snapshots, cleaned. One row per price change
+      per station per fuel type. All of NSW. Repeated (unchanged) snapshot rows grouped into one.
+    columns:
+      - name: station_code
+        description: Joins to stg_api_stations.station_code
+        data_tests:
+          - not_null
+      - name: fuel_code
+        data_tests:
+          - not_null
+      - name: price_cpl
+        description: Cents per litre (EV entries are almost all 0, see data notes)
+        data_tests:
+          - not_null
+      - name: price_updated_at
+        description: When the price changed, Sydney local time (converted from UTC)
+        data_tests:
+          - not_null
+      - name: price_age_days
+        description: Days from the price's last update to the last snapshot that showed it
+      - name: is_current
+        description: True if the price appears in the latest snapshot
+      - name: is_stale
+        description: True if the price had not been updated for more than 7 days
+      - name: is_outlier
+        description: True for petrol/diesel prices under 100 c/L
+      - name: is_fuel
+        description: False for EV entries
