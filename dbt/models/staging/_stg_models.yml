@@ -56,3 +56,31 @@ models:
         description: True for petrol/diesel prices under 100 c/L
       - name: is_fuel
         description: False for EV entries
+
+  - name: stg_api_stations
+    description: >
+      Stations from the daily API snapshots, cleaned. One row per station, using its
+      latest details. Suburb and postcode split out of the address. All of NSW.
+    columns:
+      - name: station_code
+        description: Station identifier, joins to stg_api_prices.station_code
+        data_tests:
+          - unique
+          - not_null
+      - name: station_name
+        data_tests:
+          - not_null
+      - name: suburb
+        description: Taken from the address (uppercase)
+        data_tests:
+          - not_null:
+              config:
+                severity: warn   # a few addresses may not follow the usual format
+      - name: postcode
+        description: Last 4 digits of the address
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: is_active
+        description: True if the station is in the latest snapshot
